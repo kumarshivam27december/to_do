@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+    margin: 0;
+    background-color: blanchedalmond;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.title {
+    color: blueviolet;
+    font-size: 8rem;
+    text-align: center;
+    opacity: 0.6;
+}
+
+#todoForm {
+    max-width: 100%;
+    width: 400px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.input {
+    border: none;
+    font-size: 1.8em;
+    padding: 1em 2em;
+
+}
+
+.input:focus {
+    outline-color: blueviolet;
+}
+
+.small-text {
+    color: rgb(31, 186, 237);
+    margin-top: 2em;
+    text-align: center;
+}
+
+.todos {
+
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+
+}
+
+.todos li {
+    cursor: pointer;
+    font-size: 1.6rem;
+    padding: 1rem 2rem;
+}
+
+
+.todos li.completed {
+    color: lightgrey;
+    text-decoration: line-through;
+}
+    </style>
+</head>
+
+<body>
+    <h1 class="title">Todo List</h1>
+    <form id="todoForm">
+        <input type="text" class="input" id="input" autocomplete="off" placeholder="Enter a todo">
+
+        <ul class="todos" id="todos">
+
+        </ul>
+
+    </form>
+    <small class="small-text">Left click to complete a todo
+        <br>
+        Right click to delete a todo
+    </small>
+    <script src="script.js"></script>
+    <script>
+        let form = document.getElementById('todoForm')
+let input = document.getElementById('input')
+let todoList = document.getElementById('todos')
+
+
+let todos = JSON.parse(localStorage.getItem('todos'))
+
+if (todos) {
+    todos.forEach(todo => addTodo(todo))
+}
+
+
+form.addEventListener('submit', (e) => {
+    e.preventDefault()
+
+    addTodo()
+})
+
+function addTodo(todo) {
+
+    console.log(input.value)
+    let todoText = input.value
+
+    if (todo) {
+        todoText = todo.text
+    }
+
+    if (todoText) {
+
+        let li = document.createElement('li')
+
+        if (todo && todo.completed) {
+            li.classList.add('completed')
+        }
+
+        li.innerText = todoText
+
+        li.addEventListener('click', () => {
+            li.classList.toggle('completed')
+
+            updateTodoList()
+        })
+
+        li.addEventListener('contextmenu', (e) => {
+            e.preventDefault()
+            li.remove()
+            updateTodoList()
+        })
+
+        todoList.append(li)
+        input.value = ''
+        updateTodoList()
+    }
+
+}
+
+function updateTodoList() {
+    let todosList = document.querySelectorAll('li')
+
+    let todos = []
+
+    todosList.forEach((todo) => {
+
+        todos.push({
+            text: todo.innerText,
+            completed: todo.classList.contains('completed')
+        })
+
+    })
+    //local storage can also store strings
+    localStorage.setItem('todos', JSON.stringify(todos))
+}
+    </script>
+</body>
+
+</html>
